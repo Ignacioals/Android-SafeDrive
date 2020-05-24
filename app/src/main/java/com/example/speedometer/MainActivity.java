@@ -2,6 +2,7 @@ package com.example.speedometer;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.Activity;
 import android.os.Bundle;
 
 import android.app.AlertDialog;
@@ -13,10 +14,20 @@ import android.content.ServiceConnection;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.text.Html;
+import android.text.method.LinkMovementMethod;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.nio.MappedByteBuffer;
+import java.nio.channels.FileChannel;
+import java.nio.charset.Charset;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -28,6 +39,7 @@ public class MainActivity extends AppCompatActivity {
     ImageView image;
     static ProgressDialog locate;
     static int p = 0;
+    static boolean speedLimit = false;
 
 
     private ServiceConnection sc = new ServiceConnection() {
@@ -105,6 +117,8 @@ public class MainActivity extends AppCompatActivity {
 
         image = (ImageView) findViewById(R.id.image);
 
+        termsConditions();
+
         start.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -132,6 +146,8 @@ public class MainActivity extends AppCompatActivity {
                 pause.setVisibility(View.VISIBLE);
                 pause.setText("Pause");
                 stop.setVisibility(View.VISIBLE);
+                if(speedLimit == true)
+                    speedAlert();
 
 
 
@@ -174,8 +190,26 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    private void termsConditions(){
+        AlertDialog.Builder builder1 = new AlertDialog.Builder(this);
+        builder1.setMessage(Html.fromHtml("Antes de usar la app debe leer los <a href=\"https://safedrive.htmlsave.net/\">Terminos y Conidiciones</a>"));
+        builder1.setCancelable(true);
 
-    /*private void speedAlert(){
+        builder1.setPositiveButton(
+                "He leido y acepto",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.cancel();
+                    }
+                });
+
+        AlertDialog alert11 = builder1.create();
+        alert11.show();
+        // Make the textview clickable.
+        ((TextView)alert11.findViewById(android.R.id.message)).setMovementMethod(LinkMovementMethod.getInstance());
+    }
+
+    private void speedAlert(){
         AlertDialog.Builder builder1 = new AlertDialog.Builder(this);
         builder1.setMessage("Vas a mas de 20km/hr, estas conduciendo");
         builder1.setCancelable(true);
@@ -190,7 +224,7 @@ public class MainActivity extends AppCompatActivity {
 
         AlertDialog alert11 = builder1.create();
         alert11.show();
-    }*/
+    }
 
     //This method leads you to the alert dialog box.
     void checkGps() {

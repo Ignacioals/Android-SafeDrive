@@ -128,11 +128,14 @@ public class LocationService extends Service implements
                 MainActivity.speed.setText(new DecimalFormat("#.##").format(speed) + " km/hr");
             else
                 MainActivity.speed.setText(".......");
-            if (speed > 20.0)
+            if (speed > 20.0) {
                 MainActivity.speedAlert.setText("Vas a más de 20km/hr \nEstás en un vehículo");
-            else
+                MainActivity.speedLimit = true;
+            }
+            else {
                 MainActivity.speedAlert.setText("...");
-
+                MainActivity.speedLimit = false;
+            }
 
 
 
