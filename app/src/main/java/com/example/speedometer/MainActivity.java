@@ -2,7 +2,11 @@ package com.example.speedometer;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.app.Activity;
+
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.os.Bundle;
 
 import android.app.AlertDialog;
@@ -12,7 +16,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.location.LocationManager;
-import android.os.Bundle;
+
 import android.os.IBinder;
 import android.text.Html;
 import android.text.method.LinkMovementMethod;
@@ -20,26 +24,25 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.nio.MappedByteBuffer;
-import java.nio.channels.FileChannel;
-import java.nio.charset.Charset;
-
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements SensorEventListener {
 
     LocationService myService;
     static boolean status;
     LocationManager locationManager;
-    static TextView speed, speedAlert;
+    static TextView speed, speedAlert, movementAlert;
     Button start, pause, stop;
-    ImageView image;
+    static ImageView image, onMovimiento, onCinturon, onVolante, onVelocidad, onOjos;
     static ProgressDialog locate;
     static int p = 0;
     static boolean speedLimit = false;
+    SensorManager sensorMan;
+    Sensor accelerometer;
+    private float[] mGravity;
+    private float mAccel;
+    private float mAccelCurrent;
+    private float mAccelLast;
+
 
 
     private ServiceConnection sc = new ServiceConnection() {
@@ -75,7 +78,15 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        sensorMan.registerListener(this, accelerometer,
+                SensorManager.SENSOR_DELAY_UI);
 
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        sensorMan.unregisterListener(this);
     }
 
     @Override
@@ -100,22 +111,63 @@ public class MainActivity extends AppCompatActivity {
             moveTaskToBack(true);
     }
 
+    @Override
+    public void onSensorChanged(SensorEvent event) {
+        if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER){
+            mGravity = event.values.clone();
+            // Shake detection
+            float x = mGravity[0];
+            float y = mGravity[1];
+            float z = mGravity[2];
+            mAccelLast = mAccelCurrent;
+            mAccelCurrent = (float)Math.sqrt(x*x + y*y + z*z);;
+            float delta = mAccelCurrent - mAccelLast;
+            mAccel = mAccel * 0.9f + delta;
+            // Make this higher or lower according to how much
+            // motion you want to detect
+            if(mAccel > 1){
+                onMovimiento.setVisibility(View.VISIBLE);
+                movementAlert.setVisibility(View.VISIBLE);
+            }
+            else {
+                onMovimiento.setVisibility(View.INVISIBLE);
+                movementAlert.setVisibility(View.INVISIBLE);
+            }
+        }
+
+    }
+
+    @Override
+    public void onAccuracyChanged(Sensor sensor, int accuracy) {
+        // required method
+    }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
+        sensorMan = (SensorManager)getSystemService(SENSOR_SERVICE);
+        accelerometer = sensorMan.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+        mAccel = 0.00f;
+        mAccelCurrent = SensorManager.GRAVITY_EARTH;
+        mAccelLast = SensorManager.GRAVITY_EARTH;
 
         speed = (TextView) findViewById(R.id.speedtext);
-        speedAlert = (TextView) findViewById(R.id.alerttext);
+        movementAlert = (TextView) findViewById(R.id.movementtext);
 
         start = (Button) findViewById(R.id.start);
         pause = (Button) findViewById(R.id.pause);
         stop = (Button) findViewById(R.id.stop);
 
         image = (ImageView) findViewById(R.id.image);
+        onCinturon = (ImageView) findViewById(R.id.botonOncinturon);
+        onVelocidad = (ImageView) findViewById(R.id.botonOnvelocidad);
+        onVolante = (ImageView) findViewById(R.id.botonOnvolante);
+        onOjos = (ImageView) findViewById(R.id.botonOnojos);
+        onMovimiento = (ImageView) findViewById(R.id.botonOnmovimiento);
+
 
         termsConditions();
 
@@ -128,15 +180,18 @@ public class MainActivity extends AppCompatActivity {
                 checkGps();
                 locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
 
+
                 if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
 
                     return;
                 }
 
 
-                if (status == false)
+                if (status == false) {
                     //Here, the Location Service gets bound and the GPS Speedometer gets Active.
                     bindService();
+
+                }
                 locate = new ProgressDialog(MainActivity.this);
                 locate.setIndeterminate(true);
                 locate.setCancelable(false);
@@ -189,6 +244,8 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+
+
 
     private void termsConditions(){
         AlertDialog.Builder builder1 = new AlertDialog.Builder(this);

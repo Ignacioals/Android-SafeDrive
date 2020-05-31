@@ -9,6 +9,7 @@ import android.os.Binder;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.SystemClock;
+import android.view.View;
 
 import androidx.annotation.Nullable;
 
@@ -129,11 +130,11 @@ public class LocationService extends Service implements
             else
                 MainActivity.speed.setText(".......");
             if (speed > 20.0) {
-                MainActivity.speedAlert.setText("Vas a más de 20km/hr \nEstás en un vehículo");
+                MainActivity.onVelocidad.setVisibility(View.VISIBLE);
                 MainActivity.speedLimit = true;
             }
             else {
-                MainActivity.speedAlert.setText("...");
+                MainActivity.onVelocidad.setVisibility(View.INVISIBLE);
                 MainActivity.speedLimit = false;
             }
 
