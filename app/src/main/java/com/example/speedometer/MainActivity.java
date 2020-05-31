@@ -30,7 +30,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     LocationService myService;
     static boolean status;
     LocationManager locationManager;
-    static TextView speed, speedAlert, movementAlert;
+    static TextView speed, movementAlert;
     Button start, pause, stop;
     static ImageView image, onMovimiento, onCinturon, onVolante, onVelocidad, onOjos;
     static ProgressDialog locate;
