@@ -17,6 +17,7 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.location.LocationManager;
 
+import android.os.CountDownTimer;
 import android.os.IBinder;
 import android.text.Html;
 import android.text.method.LinkMovementMethod;
@@ -126,12 +127,20 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             // Make this higher or lower according to how much
             // motion you want to detect
             if(mAccel > 1){
-                onMovimiento.setVisibility(View.VISIBLE);
-                movementAlert.setVisibility(View.VISIBLE);
-            }
-            else {
-                onMovimiento.setVisibility(View.INVISIBLE);
-                movementAlert.setVisibility(View.INVISIBLE);
+                new CountDownTimer(3000, 1000) {
+
+                    public void onTick(long millisUntilFinished) {
+                        onMovimiento.setVisibility(View.VISIBLE);
+                        movementAlert.setVisibility(View.VISIBLE);
+                    }
+
+                    public void onFinish() {
+                        onMovimiento.setVisibility(View.INVISIBLE);
+                        movementAlert.setVisibility(View.INVISIBLE);
+                    }
+                }.start();
+
+
             }
         }
 
