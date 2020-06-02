@@ -59,6 +59,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             status = false;
         }
     };
+    private boolean cameraStatus = false;
 
     void bindService() {
         if (status == true)
@@ -66,6 +67,13 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         Intent i = new Intent(getApplicationContext(), LocationService.class);
         bindService(i, sc, BIND_AUTO_CREATE);
         status = true;
+    }
+    void startCameraActivity() {
+        if (status == true)
+            return;
+        Intent i = new Intent(getApplicationContext(), CameraActivity.class);
+        bindService(i, sc, BIND_AUTO_CREATE);
+        cameraStatus = true;
     }
 
     void unbindService() {
@@ -199,6 +207,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 if (status == false) {
                     //Here, the Location Service gets bound and the GPS Speedometer gets Active.
                     bindService();
+                    startCameraActivity();
 
                 }
                 locate = new ProgressDialog(MainActivity.this);

@@ -10,7 +10,6 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.os.SystemClock;
 import android.view.View;
-
 import androidx.annotation.Nullable;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -23,7 +22,6 @@ import com.google.android.gms.location.LocationServices;
 import java.text.DecimalFormat;
 
 
-
 public class LocationService extends Service implements
         LocationListener,
         GoogleApiClient.ConnectionCallbacks,
@@ -34,7 +32,7 @@ public class LocationService extends Service implements
     LocationRequest mLocationRequest;
     GoogleApiClient mGoogleApiClient;
     Location mCurrentLocation, lStart, lEnd;
-
+    boolean cameraIsOn = false;
     double speed;
 
 
@@ -132,6 +130,7 @@ public class LocationService extends Service implements
             if (speed > 20.0) {
                 MainActivity.onVelocidad.setVisibility(View.VISIBLE);
                 MainActivity.speedLimit = true;
+                checkCameraImages();
             }
             else {
                 MainActivity.onVelocidad.setVisibility(View.INVISIBLE);
@@ -144,6 +143,13 @@ public class LocationService extends Service implements
 
         }
 
+    }
+
+    private void checkCameraImages() {
+        if (!cameraIsOn) {
+            cameraIsOn = true;
+            startActivity(CameraActivity.get);
+        }
     }
 
 
