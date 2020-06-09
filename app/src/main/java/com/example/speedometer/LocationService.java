@@ -1,5 +1,6 @@
 package com.example.speedometer;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.Service;
 import android.content.DialogInterface;
@@ -32,7 +33,7 @@ public class LocationService extends Service implements
     LocationRequest mLocationRequest;
     GoogleApiClient mGoogleApiClient;
     Location mCurrentLocation, lStart, lEnd;
-    boolean cameraIsOn = false;
+    boolean speedlimit = false;
     double speed;
 
 
@@ -51,6 +52,7 @@ public class LocationService extends Service implements
         return mBinder;
     }
 
+    @SuppressLint("RestrictedApi")
     protected void createLocationRequest() {
         mLocationRequest = new LocationRequest();
         mLocationRequest.setInterval(INTERVAL);
@@ -129,12 +131,13 @@ public class LocationService extends Service implements
                 MainActivity.speed.setText(".......");
             if (speed > 20.0) {
                 MainActivity.onVelocidad.setVisibility(View.VISIBLE);
-                MainActivity.speedLimit = true;
-                checkCameraImages();
+                speedlimit = true;
+                /*MainActivity.startCamera();*/
+
             }
             else {
                 MainActivity.onVelocidad.setVisibility(View.INVISIBLE);
-                MainActivity.speedLimit = false;
+                speedlimit = false;
             }
 
 
@@ -143,14 +146,15 @@ public class LocationService extends Service implements
 
         }
 
+
     }
 
-    private void checkCameraImages() {
-        if (!cameraIsOn) {
-            cameraIsOn = true;
-            startActivity(CameraActivity.get);
-        }
+
+    private void showAlert(){
+        if(speedlimit)
+            MainActivity.alert11.show();
     }
+
 
 
     @Override

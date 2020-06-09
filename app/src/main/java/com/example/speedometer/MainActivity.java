@@ -1,12 +1,16 @@
 package com.example.speedometer;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 
 
+import android.Manifest;
+import android.content.pm.PackageManager;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+
 import android.os.Bundle;
 
 import android.app.AlertDialog;
@@ -21,10 +25,21 @@ import android.os.CountDownTimer;
 import android.os.IBinder;
 import android.text.Html;
 import android.text.method.LinkMovementMethod;
+
 import android.view.View;
+
 import android.widget.Button;
+
 import android.widget.ImageView;
 import android.widget.TextView;
+
+
+import com.google.android.gms.vision.CameraSource;
+import com.google.android.gms.vision.MultiProcessor;
+import com.google.android.gms.vision.face.FaceDetector;
+
+import java.io.IOException;
+
 
 public class MainActivity extends AppCompatActivity implements SensorEventListener {
 
@@ -43,7 +58,10 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private float mAccel;
     private float mAccelCurrent;
     private float mAccelLast;
+    static boolean movementStatus = false;
+    static AlertDialog alert11;
 
+    CameraSource cameraSource;
 
 
     private ServiceConnection sc = new ServiceConnection() {
@@ -68,6 +86,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         bindService(i, sc, BIND_AUTO_CREATE);
         status = true;
     }
+
     void startCameraActivity() {
         if (status == true)
             return;
@@ -122,24 +141,27 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
     @Override
     public void onSensorChanged(SensorEvent event) {
-        if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER){
+        if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
             mGravity = event.values.clone();
             // Shake detection
             float x = mGravity[0];
             float y = mGravity[1];
             float z = mGravity[2];
             mAccelLast = mAccelCurrent;
-            mAccelCurrent = (float)Math.sqrt(x*x + y*y + z*z);;
+            mAccelCurrent = (float) Math.sqrt(x * x + y * y + z * z);
+            ;
             float delta = mAccelCurrent - mAccelLast;
             mAccel = mAccel * 0.9f + delta;
             // Make this higher or lower according to how much
             // motion you want to detect
-            if(mAccel > 1){
-                new CountDownTimer(3000, 1000) {
+            if (mAccel > 3.5) {
+                new CountDownTimer(5000, 1000) {
 
                     public void onTick(long millisUntilFinished) {
                         onMovimiento.setVisibility(View.VISIBLE);
                         movementAlert.setVisibility(View.VISIBLE);
+                        movementStatus = true;
+                        startCameraActivity();
                     }
 
                     public void onFinish() {
@@ -154,6 +176,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
     }
 
+
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
         // required method
@@ -165,7 +188,9 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        sensorMan = (SensorManager)getSystemService(SENSOR_SERVICE);
+        createCameraSource();
+
+        sensorMan = (SensorManager) getSystemService(SENSOR_SERVICE);
         accelerometer = sensorMan.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         mAccel = 0.00f;
         mAccelCurrent = SensorManager.GRAVITY_EARTH;
@@ -186,6 +211,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         onMovimiento = (ImageView) findViewById(R.id.botonOnmovimiento);
 
 
+        speedAlert();
         termsConditions();
 
         start.setOnClickListener(new View.OnClickListener() {
@@ -207,7 +233,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 if (status == false) {
                     //Here, the Location Service gets bound and the GPS Speedometer gets Active.
                     bindService();
-                    startCameraActivity();
+
 
                 }
                 locate = new ProgressDialog(MainActivity.this);
@@ -219,9 +245,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 pause.setVisibility(View.VISIBLE);
                 pause.setText("Pause");
                 stop.setVisibility(View.VISIBLE);
-                if(speedLimit == true)
-                    speedAlert();
-
 
 
             }
@@ -259,11 +282,63 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 pause.setVisibility(View.GONE);
                 stop.setVisibility(View.GONE);
                 p = 0;
+                speed.setText("....");
+                onVelocidad.setVisibility(View.INVISIBLE);
             }
         });
     }
 
+    public void createCameraSource() {
+        FaceDetector detector = new FaceDetector.Builder(this)
+                .setTrackingEnabled(true)
+                .setClassificationType(FaceDetector.ALL_CLASSIFICATIONS)
+                .setMode(FaceDetector.FAST_MODE)
+                .build();
+        detector.setProcessor(new MultiProcessor.Builder(new FaceTrackerFactory()).build());
 
+        cameraSource = new CameraSource.Builder(this, detector)
+                .setRequestedPreviewSize(1024, 768)
+                .setFacing(CameraSource.CAMERA_FACING_FRONT)
+                .setRequestedFps(30.0f)
+                .build();
+
+        try {
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+                // TODO: Consider calling
+                //    ActivityCompat#requestPermissions
+                // here to request the missing permissions, and then overriding
+                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                //                                          int[] grantResults)
+                // to handle the case where the user grants the permission. See the documentation
+                // for ActivityCompat#requestPermissions for more details.
+                return;
+            }
+            cameraSource.start();
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    private void speedAlert(){
+        AlertDialog.Builder builder1;
+        builder1 = new AlertDialog.Builder(this);
+        builder1.setMessage("Vas a mas de 20km/hr, estas conduciendo");
+        builder1.setCancelable(true);
+
+        builder1.setPositiveButton(
+                "Ok",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.cancel();
+                    }
+                });
+
+        alert11 = builder1.create();
+
+
+    }
 
     private void termsConditions(){
         AlertDialog.Builder builder1 = new AlertDialog.Builder(this);
@@ -284,22 +359,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         ((TextView)alert11.findViewById(android.R.id.message)).setMovementMethod(LinkMovementMethod.getInstance());
     }
 
-    private void speedAlert(){
-        AlertDialog.Builder builder1 = new AlertDialog.Builder(this);
-        builder1.setMessage("Vas a mas de 20km/hr, estas conduciendo");
-        builder1.setCancelable(true);
-
-        builder1.setPositiveButton(
-                "Ok",
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        dialog.cancel();
-                    }
-                });
-
-        AlertDialog alert11 = builder1.create();
-        alert11.show();
-    }
 
     //This method leads you to the alert dialog box.
     void checkGps() {
@@ -336,3 +395,4 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     }
 
 }
+
