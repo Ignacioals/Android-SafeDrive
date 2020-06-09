@@ -16,13 +16,18 @@ public class EyesTracker extends Tracker<Face> {
 
     @Override
     public void onUpdate(Detector.Detections<Face> detections, Face face) {
-        if (face.getIsLeftEyeOpenProbability() > THRESHOLD || face.getIsRightEyeOpenProbability() > THRESHOLD) {
-            MainActivity.onOjos.setVisibility(View.VISIBLE);
+        if(MainActivity.p == 0) {
+            if (face.getIsLeftEyeOpenProbability() > THRESHOLD || face.getIsRightEyeOpenProbability() > THRESHOLD) {
+                if(!MainActivity.eyeDetected) {
+                    MainActivity.eyeDetected = true;
+                    MainActivity.onOjos.setVisibility(View.VISIBLE);
+                }
 
-        }
-        else {
-            MainActivity.onOjos.setVisibility(View.INVISIBLE);
+            } else {
+                MainActivity.eyeDetected = false;
+                MainActivity.onOjos.setVisibility(View.INVISIBLE);
 
+            }
         }
     }
 

@@ -32,10 +32,14 @@ import android.widget.Button;
 
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 
 import com.google.android.gms.vision.CameraSource;
+import com.google.android.gms.vision.Detector;
 import com.google.android.gms.vision.MultiProcessor;
+import com.google.android.gms.vision.Tracker;
+import com.google.android.gms.vision.face.Face;
 import com.google.android.gms.vision.face.FaceDetector;
 
 import java.io.IOException;
@@ -60,6 +64,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private float mAccelLast;
     static boolean movementStatus = false;
     static AlertDialog alert11;
+    static boolean eyeDetected = false;
 
     CameraSource cameraSource;
 
@@ -188,7 +193,14 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        createCameraSource();
+        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, 1);
+            Toast.makeText(this, "Grant Permission and restart app", Toast.LENGTH_SHORT).show();
+        }
+        else {
+            createCameraSource();
+        }
+
 
         sensorMan = (SensorManager) getSystemService(SENSOR_SERVICE);
         accelerometer = sensorMan.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
@@ -287,6 +299,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             }
         });
     }
+
 
     public void createCameraSource() {
         FaceDetector detector = new FaceDetector.Builder(this)

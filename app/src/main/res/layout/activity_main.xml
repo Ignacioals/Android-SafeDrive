@@ -189,9 +189,9 @@
         android:layout_marginTop="270dp"
         android:fontFamily="sans-serif-black"
         android:gravity="center"
-        android:text="Sos conductor"
+        android:text="Sos conductor/pasajero"
         android:textColor="@android:color/black"
-        android:textSize="20sp" />
+        android:textSize="17sp" />
 
     <TextView
         android:id="@+id/volantetext"
