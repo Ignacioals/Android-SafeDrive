@@ -35,7 +35,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
-import com.google.android.gms.vision.CameraSource;
+//import com.google.android.gms.vision.CameraSource;
 import com.google.android.gms.vision.Detector;
 import com.google.android.gms.vision.MultiProcessor;
 import com.google.android.gms.vision.Tracker;
@@ -66,7 +66,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     static AlertDialog alert11;
     static boolean eyeDetected = false;
 
-    CameraSource cameraSource;
+//    CameraSource cameraSource;
 
 
     private ServiceConnection sc = new ServiceConnection() {
@@ -93,10 +93,16 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     }
 
     void startCameraActivity() {
-        if (status == true)
+        if (cameraStatus)
             return;
-        Intent i = new Intent(getApplicationContext(), CameraActivity.class);
-        bindService(i, sc, BIND_AUTO_CREATE);
+        try {
+            Intent intent = new Intent(getApplicationContext(), CamService.class);
+            startService(intent);
+        } catch (Exception e) {
+            // This will catch any exception, because they are all descended from Exception
+            System.out.println("Error " + e.getMessage());
+        }
+//        bindService(i, sc, BIND_AUTO_CREATE);
         cameraStatus = true;
     }
 
@@ -166,7 +172,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                         onMovimiento.setVisibility(View.VISIBLE);
                         movementAlert.setVisibility(View.VISIBLE);
                         movementStatus = true;
-                        startCameraActivity();
+//                        startCameraActivity();
                     }
 
                     public void onFinish() {
@@ -198,7 +204,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             Toast.makeText(this, "Grant Permission and restart app", Toast.LENGTH_SHORT).show();
         }
         else {
-            createCameraSource();
+//            createCameraSource();
         }
 
 
@@ -259,6 +265,11 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 stop.setVisibility(View.VISIBLE);
 
 
+                if (!cameraStatus) {
+                    startCameraActivity();
+                }
+
+
             }
         });
 
@@ -302,35 +313,35 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
 
     public void createCameraSource() {
-        FaceDetector detector = new FaceDetector.Builder(this)
-                .setTrackingEnabled(true)
-                .setClassificationType(FaceDetector.ALL_CLASSIFICATIONS)
-                .setMode(FaceDetector.FAST_MODE)
-                .build();
-        detector.setProcessor(new MultiProcessor.Builder(new FaceTrackerFactory()).build());
-
-        cameraSource = new CameraSource.Builder(this, detector)
-                .setRequestedPreviewSize(1024, 768)
-                .setFacing(CameraSource.CAMERA_FACING_FRONT)
-                .setRequestedFps(30.0f)
-                .build();
-
-        try {
-            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-                // TODO: Consider calling
-                //    ActivityCompat#requestPermissions
-                // here to request the missing permissions, and then overriding
-                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                //                                          int[] grantResults)
-                // to handle the case where the user grants the permission. See the documentation
-                // for ActivityCompat#requestPermissions for more details.
-                return;
-            }
-            cameraSource.start();
-        }
-        catch (IOException e) {
-            e.printStackTrace();
-        }
+//        FaceDetector detector = new FaceDetector.Builder(this)
+//                .setTrackingEnabled(true)
+//                .setClassificationType(FaceDetector.ALL_CLASSIFICATIONS)
+//                .setMode(FaceDetector.FAST_MODE)
+//                .build();
+//        detector.setProcessor(new MultiProcessor.Builder(new FaceTrackerFactory()).build());
+//
+//        cameraSource = new CameraSource.Builder(this, detector)
+//                .setRequestedPreviewSize(1024, 768)
+//                .setFacing(CameraSource.CAMERA_FACING_FRONT)
+//                .setRequestedFps(30.0f)
+//                .build();
+//
+//        try {
+//            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+//                // TODO: Consider calling
+//                //    ActivityCompat#requestPermissions
+//                // here to request the missing permissions, and then overriding
+//                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+//                //                                          int[] grantResults)
+//                // to handle the case where the user grants the permission. See the documentation
+//                // for ActivityCompat#requestPermissions for more details.
+//                return;
+//            }
+//            cameraSource.start();
+//        }
+//        catch (IOException e) {
+//            e.printStackTrace();
+//        }
     }
 
 

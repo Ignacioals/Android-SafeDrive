@@ -88,10 +88,10 @@ public class ImageUtils {
         }
     }
     public static float[][][][] convertImageToFloatArray ( Bitmap image ) {
-        int width = image.getWidth();
-        int height = 720;
-        int startY = (image.getHeight() - 720) /2;
-        image = Bitmap.createBitmap(image, 0, startY, width, height);
+//        int width = image.getWidth();
+//        int height = 720;
+//        int startY = (image.getHeight() - 720) /2;
+//        image = Bitmap.createBitmap(image, 0, startY, width, height);
 
         int imageSize = 20;
         image = Bitmap.createScaledBitmap(image,imageSize, imageSize, true);
