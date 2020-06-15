@@ -55,8 +55,21 @@ class Classifier(assetManager: AssetManager, modelPath: String, context: Context
         INTERPRETER.run(imageArray, result)
 
         Log.d("results", result[0][0].toString())
-        return result[0][0] < 0.001;
+        return result[0][0] < 0.009;
     }
+
+    fun isPassanger(bitmap: Bitmap): Boolean {
+        checkEyes(bitmap)
+        //val scaledBitmap = Bitmap.createScaledBitmap(bitmap, INPUT_SIZE, INPUT_SIZE, false)
+        //val byteBuffer = convertBitmapToByteBuffer(scaledBitmap)
+        val imageArray = ImageUtils.convertImageToFloatArray( bitmap )
+        val result = Array(1) { FloatArray(1) }
+        INTERPRETER.run(imageArray, result)
+
+        Log.d("results", result[0][0].toString())
+        return result[0][0] > 0.7;
+    }
+
     fun recognizeImage(bitmap: Bitmap): Float {
         //val scaledBitmap = Bitmap.createScaledBitmap(bitmap, INPUT_SIZE, INPUT_SIZE, false)
         //val byteBuffer = convertBitmapToByteBuffer(scaledBitmap)
@@ -90,6 +103,12 @@ class Classifier(assetManager: AssetManager, modelPath: String, context: Context
                     })
                 }
             }
+        }
+        else{
+            Handler(Looper.getMainLooper()).post(Runnable {
+                MainActivity.eyeDetected = false
+                MainActivity.onOjos.visibility = View.INVISIBLE
+            })
         }
 
 

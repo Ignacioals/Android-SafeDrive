@@ -115,18 +115,27 @@ class CamService: Service() {
                             image!!.height
                     )
                     var isDriver = rgbFrameBitmap?.let { it1 -> classifier.isDriver(it1) }
-                    if (isDriver != null) {
+                    var isPassanger = rgbFrameBitmap?.let { it1 -> classifier.isPassanger(it1)}
+                    if (isDriver != null && isPassanger != null) {
                         if (isDriver) {
                             Handler(Looper.getMainLooper()).post(Runnable {
                                 MainActivity.onCinturon.visibility = View.VISIBLE
+                                MainActivity.seatbelt.text = "Sos conductor"
+                            })
+                        } else if (isPassanger) {
+                            Handler(Looper.getMainLooper()).post(Runnable {
+                                MainActivity.onCinturon.visibility = View.VISIBLE
+                                MainActivity.seatbelt.text = "Sos Pasajero"
                             })
                         } else {
                             Handler(Looper.getMainLooper()).post(Runnable {
                                 MainActivity.onCinturon.visibility = View.INVISIBLE
+                                MainActivity.seatbelt.text = "..."
                             })
                         }
 
                     }
+
 
 //                    var results = rgbFrameBitmap?.let { it1 -> classifier.recognizeImage(it1) };
 //                    Log.d("results", results.toString())
@@ -256,7 +265,7 @@ class CamService: Service() {
             val characteristics = cameraManager!!.getCameraCharacteristics(id)
             val facing = characteristics.get(CameraCharacteristics.LENS_FACING)
             if (facing == CameraCharacteristics.LENS_FACING_FRONT) {
-                camId = id
+                camId = "1"
                 break
             }
         }

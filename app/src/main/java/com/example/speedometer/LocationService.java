@@ -128,7 +128,7 @@ public class LocationService extends Service implements
             if (speed > 0.0)
                 MainActivity.speed.setText(new DecimalFormat("#.##").format(speed) + " km/hr");
             else
-                MainActivity.speed.setText(".......");
+                MainActivity.speed.setText("0 km/hr");
             if (speed > 20.0) {
                 MainActivity.onVelocidad.setVisibility(View.VISIBLE);
                 speedlimit = true;

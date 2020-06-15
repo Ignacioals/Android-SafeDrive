@@ -50,7 +50,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     LocationService myService;
     static boolean status;
     LocationManager locationManager;
-    static TextView speed, movementAlert;
+    static TextView speed, movementAlert, seatbelt;
     Button start, pause, stop;
     static ImageView image, onMovimiento, onCinturon, onVolante, onVelocidad, onOjos;
     static ProgressDialog locate;
@@ -165,13 +165,16 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             mAccel = mAccel * 0.9f + delta;
             // Make this higher or lower according to how much
             // motion you want to detect
-            if (mAccel > 3.5) {
+            if (mAccel > 6) {
                 new CountDownTimer(5000, 1000) {
 
                     public void onTick(long millisUntilFinished) {
                         onMovimiento.setVisibility(View.VISIBLE);
                         movementAlert.setVisibility(View.VISIBLE);
                         movementStatus = true;
+                        /*if (!cameraStatus) {
+                            startCameraActivity();
+                        }*/
 //                        startCameraActivity();
                     }
 
@@ -216,6 +219,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
         speed = (TextView) findViewById(R.id.speedtext);
         movementAlert = (TextView) findViewById(R.id.movementtext);
+        seatbelt = (TextView) findViewById(R.id.seatbelttext);
 
         start = (Button) findViewById(R.id.start);
         pause = (Button) findViewById(R.id.pause);
@@ -263,7 +267,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 pause.setVisibility(View.VISIBLE);
                 pause.setText("Pause");
                 stop.setVisibility(View.VISIBLE);
-
 
                 if (!cameraStatus) {
                     startCameraActivity();
