@@ -58,7 +58,7 @@ class Classifier(assetManager: AssetManager, modelPath: String, context: Context
         return result[0][0] < 0.009;
     }
 
-    fun isPassanger(bitmap: Bitmap): Boolean {
+    fun isPassenger(bitmap: Bitmap): Boolean {
         checkEyes(bitmap)
         //val scaledBitmap = Bitmap.createScaledBitmap(bitmap, INPUT_SIZE, INPUT_SIZE, false)
         //val byteBuffer = convertBitmapToByteBuffer(scaledBitmap)
@@ -70,13 +70,16 @@ class Classifier(assetManager: AssetManager, modelPath: String, context: Context
         return result[0][0] > 0.7;
     }
 
-    fun recognizeImage(bitmap: Bitmap): Float {
+    fun steeringWheelDetected(bitmap: Bitmap): Boolean {
+        checkEyes(bitmap)
         //val scaledBitmap = Bitmap.createScaledBitmap(bitmap, INPUT_SIZE, INPUT_SIZE, false)
         //val byteBuffer = convertBitmapToByteBuffer(scaledBitmap)
         val imageArray = ImageUtils.convertImageToFloatArray( bitmap )
         val result = Array(1) { FloatArray(1) }
         INTERPRETER.run(imageArray, result)
-        return result[0][0]
+
+        Log.d("results", result[0][0].toString())
+        return result[0][0] > 0.7;
     }
 
     private val THRESHOLD = 0.7f

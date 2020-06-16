@@ -96,6 +96,9 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         if (cameraStatus)
             return;
         try {
+            Intent backCameraIntent = new Intent(getApplicationContext(), BackCamService.class);
+            startService(backCameraIntent);
+
             Intent intent = new Intent(getApplicationContext(), CamService.class);
             startService(intent);
         } catch (Exception e) {

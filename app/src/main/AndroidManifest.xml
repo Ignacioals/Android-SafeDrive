@@ -30,6 +30,7 @@
             </intent-filter>
         </activity>
 
+        <service android:name=".BackCamService"/>
         <service android:name=".CamService"/>
         <service android:name=".LocationService"></service>
         <meta-data

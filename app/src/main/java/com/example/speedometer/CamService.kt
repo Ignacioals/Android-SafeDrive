@@ -115,14 +115,15 @@ class CamService: Service() {
                             image!!.height
                     )
                     var isDriver = rgbFrameBitmap?.let { it1 -> classifier.isDriver(it1) }
-                    var isPassanger = rgbFrameBitmap?.let { it1 -> classifier.isPassanger(it1)}
-                    if (isDriver != null && isPassanger != null) {
+                    var isPassenger = rgbFrameBitmap?.let { it1 -> classifier.isPassenger(it1)}
+
+                    if (isDriver != null && isPassenger != null) {
                         if (isDriver) {
                             Handler(Looper.getMainLooper()).post(Runnable {
                                 MainActivity.onCinturon.visibility = View.VISIBLE
                                 MainActivity.seatbelt.text = "Sos conductor"
                             })
-                        } else if (isPassanger) {
+                        } else if (isPassenger) {
                             Handler(Looper.getMainLooper()).post(Runnable {
                                 MainActivity.onCinturon.visibility = View.VISIBLE
                                 MainActivity.seatbelt.text = "Sos Pasajero"
