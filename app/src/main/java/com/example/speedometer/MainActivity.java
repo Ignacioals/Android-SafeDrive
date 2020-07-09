@@ -34,25 +34,23 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.TimerTask;
+
 
 //import com.google.android.gms.vision.CameraSource;
-import com.google.android.gms.vision.Detector;
-import com.google.android.gms.vision.MultiProcessor;
-import com.google.android.gms.vision.Tracker;
-import com.google.android.gms.vision.face.Face;
-import com.google.android.gms.vision.face.FaceDetector;
-
-import java.io.IOException;
 
 
 public class MainActivity extends AppCompatActivity implements SensorEventListener {
 
     LocationService myService;
     static boolean status;
+    static boolean timerstarted = false;
     LocationManager locationManager;
-    static TextView speed, movementAlert, seatbelt;
+    static TextView speed, movementAlert, seatbelt, passanger;
     Button start, pause, stop;
-    static ImageView image, onMovimiento, onCinturon, onVolante, onVelocidad, onOjos;
+    static ImageView image, onMovimiento, onCinturon, onVelocidad, onOjos, onPasajero, report;
     static ProgressDialog locate;
     static int p = 0;
     static boolean speedLimit = false;
@@ -65,6 +63,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     static boolean movementStatus = false;
     static AlertDialog alert11;
     static boolean eyeDetected = false;
+
+    static Report reportClass = new Report();
 
 //    CameraSource cameraSource;
 
@@ -96,8 +96,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         if (cameraStatus)
             return;
         try {
-            Intent backCameraIntent = new Intent(getApplicationContext(), BackCamService.class);
-            startService(backCameraIntent);
+            /*Intent backCameraIntent = new Intent(getApplicationContext(), BackCamService.class);
+            startService(backCameraIntent);*/
 
             Intent intent = new Intent(getApplicationContext(), CamService.class);
             startService(intent);
@@ -173,17 +173,11 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
                     public void onTick(long millisUntilFinished) {
                         onMovimiento.setVisibility(View.VISIBLE);
-                        movementAlert.setVisibility(View.VISIBLE);
                         movementStatus = true;
-                        /*if (!cameraStatus) {
-                            startCameraActivity();
-                        }*/
-//                        startCameraActivity();
                     }
 
                     public void onFinish() {
                         onMovimiento.setVisibility(View.INVISIBLE);
-                        movementAlert.setVisibility(View.INVISIBLE);
                     }
                 }.start();
 
@@ -223,6 +217,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         speed = (TextView) findViewById(R.id.speedtext);
         movementAlert = (TextView) findViewById(R.id.movementtext);
         seatbelt = (TextView) findViewById(R.id.seatbelttext);
+        passanger = (TextView) findViewById(R.id.seatbeltpasaj);
 
         start = (Button) findViewById(R.id.start);
         pause = (Button) findViewById(R.id.pause);
@@ -231,9 +226,19 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         image = (ImageView) findViewById(R.id.image);
         onCinturon = (ImageView) findViewById(R.id.botonOncinturon);
         onVelocidad = (ImageView) findViewById(R.id.botonOnvelocidad);
-        onVolante = (ImageView) findViewById(R.id.botonOnvolante);
         onOjos = (ImageView) findViewById(R.id.botonOnojos);
         onMovimiento = (ImageView) findViewById(R.id.botonOnmovimiento);
+        onPasajero = (ImageView) findViewById(R.id.botonOnpasaj);
+        report = (ImageView) findViewById(R.id.report);
+
+        report.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View view) {
+                Intent myIntent = new Intent(view.getContext(), ReportActivity.class);
+                startActivityForResult(myIntent, 0);
+            }
+
+        });
+
 
 
         speedAlert();
@@ -313,43 +318,28 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 p = 0;
                 speed.setText("....");
                 onVelocidad.setVisibility(View.INVISIBLE);
+
             }
         });
     }
 
+    static void startTimer(){
+        if(timerstarted == false){
+            new CountDownTimer(30000, 1000) {
+                public void onTick(long millisUntilFinished) {
+                    if(timerstarted == false) {
+                        String date = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(new Date());
+                        MainActivity.reportClass.addReport(date, MainActivity.speed.getText().toString());
+                    }
+                    timerstarted = true;
+                }
 
-    public void createCameraSource() {
-//        FaceDetector detector = new FaceDetector.Builder(this)
-//                .setTrackingEnabled(true)
-//                .setClassificationType(FaceDetector.ALL_CLASSIFICATIONS)
-//                .setMode(FaceDetector.FAST_MODE)
-//                .build();
-//        detector.setProcessor(new MultiProcessor.Builder(new FaceTrackerFactory()).build());
-//
-//        cameraSource = new CameraSource.Builder(this, detector)
-//                .setRequestedPreviewSize(1024, 768)
-//                .setFacing(CameraSource.CAMERA_FACING_FRONT)
-//                .setRequestedFps(30.0f)
-//                .build();
-//
-//        try {
-//            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-//                // TODO: Consider calling
-//                //    ActivityCompat#requestPermissions
-//                // here to request the missing permissions, and then overriding
-//                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-//                //                                          int[] grantResults)
-//                // to handle the case where the user grants the permission. See the documentation
-//                // for ActivityCompat#requestPermissions for more details.
-//                return;
-//            }
-//            cameraSource.start();
-//        }
-//        catch (IOException e) {
-//            e.printStackTrace();
-//        }
+                public void onFinish() {
+                    timerstarted = false;
+                }
+            }.start();
+        }
     }
-
 
     private void speedAlert(){
         AlertDialog.Builder builder1;

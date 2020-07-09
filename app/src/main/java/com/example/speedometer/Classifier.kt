@@ -67,10 +67,10 @@ class Classifier(assetManager: AssetManager, modelPath: String, context: Context
         INTERPRETER.run(imageArray, result)
 
         Log.d("results", result[0][0].toString())
-        return result[0][0] > 0.7;
+        return result[0][0] > 0.65;
     }
 
-    fun steeringWheelDetected(bitmap: Bitmap): Boolean {
+    /*fun steeringWheelDetected(bitmap: Bitmap): Boolean {
         checkEyes(bitmap)
         //val scaledBitmap = Bitmap.createScaledBitmap(bitmap, INPUT_SIZE, INPUT_SIZE, false)
         //val byteBuffer = convertBitmapToByteBuffer(scaledBitmap)
@@ -80,7 +80,7 @@ class Classifier(assetManager: AssetManager, modelPath: String, context: Context
 
         Log.d("results", result[0][0].toString())
         return result[0][0] > 0.7;
-    }
+    }*/
 
     private val THRESHOLD = 0.7f
 

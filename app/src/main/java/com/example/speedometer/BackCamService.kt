@@ -27,6 +27,7 @@ import kotlin.math.absoluteValue
 /**
  * Copyright (c) 2019 by Roman Sisik. All rights reserved.
  */
+/*
 class BackCamService: Service() {
     private var rgbFrameBitmap: Bitmap? = null
     private var rgbBytes: IntArray? = null
@@ -256,12 +257,12 @@ class BackCamService: Service() {
             val characteristics = cameraManager!!.getCameraCharacteristics(id)
             val facing = characteristics.get(CameraCharacteristics.LENS_FACING)
             if (facing == CameraCharacteristics.LENS_FACING_BACK) {
-                camId = "0"
+                camId = "1"
                 break
             }
         }
         if(camId == null) {
-            camId = cameraManager!!.cameraIdList[0]
+            camId = cameraManager!!.cameraIdList[1]
         }
 
 //        previewSize = chooseSupportedSize(camId!!, width, height)
@@ -393,4 +394,4 @@ class BackCamService: Service() {
         val CHANNEL_NAME = "cam_service_channel_name"
 
     }
-}
+} */

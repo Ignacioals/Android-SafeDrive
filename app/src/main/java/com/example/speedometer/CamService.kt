@@ -21,6 +21,9 @@ import android.view.WindowManager
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import com.example.speedometer.utils.ImageUtils
+import java.text.SimpleDateFormat
+import java.util.*
+import kotlin.collections.ArrayList
 import kotlin.math.absoluteValue
 
 
@@ -36,6 +39,7 @@ class CamService: Service() {
     private var imageConverter: Runnable? = null
     private lateinit var classifier: Classifier
 
+
     // UI
     private var wm: WindowManager? = null
 
@@ -47,6 +51,7 @@ class CamService: Service() {
     private var captureSession: CameraCaptureSession? = null
     private var imageReader: ImageReader? = null
 
+    private var timerstarted: Boolean = false
 
 
     /**
@@ -121,17 +126,18 @@ class CamService: Service() {
                         if (isDriver) {
                             Handler(Looper.getMainLooper()).post(Runnable {
                                 MainActivity.onCinturon.visibility = View.VISIBLE
-                                MainActivity.seatbelt.text = "Sos conductor"
+                                if(!MainActivity.timerstarted)
+                                    MainActivity.startTimer()
                             })
                         } else if (isPassenger) {
                             Handler(Looper.getMainLooper()).post(Runnable {
-                                MainActivity.onCinturon.visibility = View.VISIBLE
-                                MainActivity.seatbelt.text = "Sos Pasajero"
+                                MainActivity.onPasajero.visibility = View.VISIBLE
                             })
                         } else {
                             Handler(Looper.getMainLooper()).post(Runnable {
                                 MainActivity.onCinturon.visibility = View.INVISIBLE
-                                MainActivity.seatbelt.text = "..."
+                                MainActivity.onPasajero.visibility = View.INVISIBLE
+
                             })
                         }
 
@@ -156,6 +162,24 @@ class CamService: Service() {
         }
 
     }
+
+
+   /* private fun startTimer(){
+        if(timerstarted == false){
+            object : CountDownTimer(30000, 1000) {
+                override fun onTick(millisUntilFinished: Long) {
+                    timerstarted = true
+                    var date: String = SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(Date())
+                    MainActivity.reportClass.addReport(date,MainActivity.speed.text.toString())
+                }
+
+                override fun onFinish() {
+                    timerstarted = false
+                }
+            }.start()
+        }
+    }
+*/
     protected fun fillBytes(planes: Array<Image.Plane>, yuvBytes: Array<ByteArray?>) {
         // Because of the variable row stride it's not possible to know in
         // advance the actual necessary dimensions of the yuv planes.

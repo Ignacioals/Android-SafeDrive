@@ -18,11 +18,25 @@
         android:visibility="visible" />
 
     <ImageView
+        android:id="@+id/report"
+        android:layout_width="71dp"
+        android:layout_height="39dp"
+        android:layout_gravity="end"
+        android:layout_marginTop="8dp"
+        android:clickable="true"
+        android:onClick="clickImage"
+        android:src="@drawable/clipboard"
+        android:visibility="visible" />
+
+
+
+
+    <ImageView
         android:id="@+id/velocidad"
         android:layout_width="67dp"
         android:layout_height="49dp"
         android:layout_gravity="start"
-        android:layout_marginTop="60dp"
+        android:layout_marginTop="80dp"
         android:src="@drawable/speedometer" />
 
     <ImageView
@@ -30,7 +44,7 @@
         android:layout_width="67dp"
         android:layout_height="49dp"
         android:layout_gravity="end"
-        android:layout_marginTop="60dp"
+        android:layout_marginTop="80dp"
         android:src="@drawable/offvelocidad"
         />
 
@@ -39,7 +53,7 @@
         android:layout_width="67dp"
         android:layout_height="49dp"
         android:layout_gravity="end"
-        android:layout_marginTop="60dp"
+        android:layout_marginTop="80dp"
         android:src="@drawable/onvelocidad"
         android:visibility="invisible"
         />
@@ -49,7 +63,7 @@
         android:layout_width="67dp"
         android:layout_height="49dp"
         android:layout_gravity="start"
-        android:layout_marginTop="160dp"
+        android:layout_marginTop="180dp"
         android:src="@drawable/phoneuse" />
 
     <ImageView
@@ -57,7 +71,7 @@
         android:layout_width="67dp"
         android:layout_height="49dp"
         android:layout_gravity="end"
-        android:layout_marginTop="160dp"
+        android:layout_marginTop="180dp"
         android:src="@drawable/offmovimiento"
         />
 
@@ -66,7 +80,7 @@
         android:layout_width="67dp"
         android:layout_height="49dp"
         android:layout_gravity="end"
-        android:layout_marginTop="160dp"
+        android:layout_marginTop="180dp"
         android:src="@drawable/onmovimiento"
         android:visibility="invisible"
         />
@@ -76,8 +90,8 @@
         android:layout_width="67dp"
         android:layout_height="49dp"
         android:layout_gravity="start"
-        android:layout_marginTop="260dp"
-        android:src="@drawable/seatbelt"
+        android:layout_marginTop="280dp"
+        android:src="@drawable/volante"
         />
 
 
@@ -86,7 +100,7 @@
         android:layout_width="67dp"
         android:layout_height="49dp"
         android:layout_gravity="end"
-        android:layout_marginTop="260dp"
+        android:layout_marginTop="280dp"
         android:src="@drawable/offcinturon"
         />
 
@@ -95,46 +109,48 @@
         android:layout_width="67dp"
         android:layout_height="49dp"
         android:layout_gravity="end"
-        android:layout_marginTop="260dp"
+        android:layout_marginTop="280dp"
         android:src="@drawable/oncinturon"
         android:visibility="invisible"
         />
 
     <ImageView
-        android:id="@+id/volante"
+        android:id="@+id/cinturonpasaj"
         android:layout_width="67dp"
         android:layout_height="49dp"
         android:layout_gravity="start"
-        android:layout_marginTop="360dp"
-        android:src="@drawable/volante"
+        android:layout_marginTop="380dp"
+        android:src="@drawable/passanger"
         />
 
 
     <ImageView
-        android:id="@+id/botonOffvolante"
+        android:id="@+id/botonOffpasaj"
         android:layout_width="67dp"
         android:layout_height="49dp"
         android:layout_gravity="end"
-        android:layout_marginTop="360dp"
-        android:src="@drawable/offvolante"
+        android:layout_marginTop="380dp"
+        android:src="@drawable/offcinturon"
         />
 
     <ImageView
-        android:id="@+id/botonOnvolante"
+        android:id="@+id/botonOnpasaj"
         android:layout_width="67dp"
         android:layout_height="49dp"
         android:layout_gravity="end"
-        android:layout_marginTop="360dp"
-        android:src="@drawable/onvolante"
+        android:layout_marginTop="380dp"
+        android:src="@drawable/oncinturon"
         android:visibility="invisible"
         />
+
+
 
     <ImageView
         android:id="@+id/ojos"
         android:layout_width="67dp"
         android:layout_height="49dp"
         android:layout_gravity="start"
-        android:layout_marginTop="460dp"
+        android:layout_marginTop="480dp"
         android:src="@drawable/eye"
         />
 
@@ -143,7 +159,7 @@
         android:layout_width="67dp"
         android:layout_height="49dp"
         android:layout_gravity="end"
-        android:layout_marginTop="460dp"
+        android:layout_marginTop="480dp"
         android:src="@drawable/offojos"
         />
 
@@ -152,7 +168,7 @@
         android:layout_width="67dp"
         android:layout_height="49dp"
         android:layout_gravity="end"
-        android:layout_marginTop="460dp"
+        android:layout_marginTop="480dp"
         android:src="@drawable/onojos"
         android:visibility="invisible"
         />
@@ -161,7 +177,7 @@
         android:id="@+id/speedtext"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="70dp"
+        android:layout_marginTop="90dp"
         android:fontFamily="sans-serif-black"
         android:gravity="center"
         android:singleLine="true"
@@ -174,7 +190,7 @@
         android:id="@+id/movementtext"
         android:layout_width="match_parent"
         android:layout_height="40dp"
-        android:layout_marginTop="170dp"
+        android:layout_marginTop="185dp"
         android:fontFamily="sans-serif-black"
         android:gravity="center"
         android:text="El telefono está en uso"
@@ -186,29 +202,31 @@
         android:id="@+id/seatbelttext"
         android:layout_width="match_parent"
         android:layout_height="41dp"
-        android:layout_marginTop="270dp"
-        android:fontFamily="sans-serif-black"
-        android:gravity="center"
-        android:text="Sos conductor/pasajero"
-        android:textColor="@android:color/black"
-        android:textSize="17sp" />
-
-    <TextView
-        android:id="@+id/volantetext"
-        android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:layout_marginTop="370dp"
+        android:layout_marginTop="285dp"
         android:fontFamily="sans-serif-black"
         android:gravity="center"
         android:text="Sos conductor"
         android:textColor="@android:color/black"
-        android:textSize="20sp" />
+        android:textSize="17sp" />
+
+
+    <TextView
+        android:id="@+id/seatbeltpasaj"
+        android:layout_width="match_parent"
+        android:layout_height="41dp"
+        android:layout_marginTop="385dp"
+        android:fontFamily="sans-serif-black"
+        android:gravity="center"
+        android:text="Sos pasajero"
+        android:textColor="@android:color/black"
+        android:textSize="17sp" />
+
 
     <TextView
         android:id="@+id/ojostext"
         android:layout_width="match_parent"
         android:layout_height="34dp"
-        android:layout_marginTop="470dp"
+        android:layout_marginTop="485dp"
         android:fontFamily="sans-serif-black"
         android:gravity="center"
         android:text="Estas viendo el telefono"
